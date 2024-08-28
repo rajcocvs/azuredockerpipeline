@@ -1,0 +1,37 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rajcowebapp-deployment
+  labels:
+    app: nodeapp
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: nodeapp-pod
+      labels:
+       app: nodeapp
+    spec:
+      containers:
+        - name: rajco
+          image: myerbappreg.azurecr.io/rajcocvs/azuredockerpipeline:#{Build.BuildId}# 
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodeapp
+
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: rajcowebapp-svc
+spec:
+   selector:
+      app: nodeapp
+   ports:
+   - protocol: TCP
+     port: 80
+     targetPort: 80
+   type: LoadBalancer
